@@ -11,7 +11,7 @@ JsonDocument doc;
 #define RST_PIN         9          // Configurable, see typical pin layout above
 #define SS_PIN          7         // Configurable, see typical pin layout above
 #define DEBUG
-//#define DHCP
+#define DHCP
 #define RFCReader
 
 #ifdef RFCReader

@@ -1,3 +1,4 @@
 # ForrasAdminRFIDReader
 
-This project use AtMega-2560 and MFRC522 RFID reader for log user in Forras-admin project.
+This project use Arduino AtMega-2560 or Uno board and MFRC522 RFID reader for log card Ids of the user to [Forras-admin](https://github.com/pzoli/forras-admin) health care project.
+Use [ForrasAdminRFIDReaderConfigurator](https://github.com/pzoli/ForrasAdminRFIDReaderConfigurator) to initialize EEPROM for net configuration.

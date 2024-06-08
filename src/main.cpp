@@ -6,8 +6,6 @@
 #include <ArduinoJson.h>
 JsonDocument doc;
 
-#define SD_SS_PIN 4
-
 #define RST_PIN         9          // Configurable, see typical pin layout above
 #define SS_PIN          7         // Configurable, see typical pin layout above
 #define DEBUG

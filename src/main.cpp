@@ -104,7 +104,7 @@ void loop() {
       } else if (buff[i] == '}' && inJSON) {
         inJSON = false;
         webResult += buff[i];
-        if (webResult.equals("{\"RESPONSE\":\"OK\"}")) {
+        if (webResult.equals(F("{\"RESPONSE\":\"OK\"}"))) {
           tone(BUZZER_PIN, 1000);
           delay(250);
           noTone(BUZZER_PIN);

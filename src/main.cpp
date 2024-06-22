@@ -8,6 +8,7 @@ JsonDocument doc;
 
 #define RST_PIN         9          // Configurable, see typical pin layout above
 #define SS_PIN          7         // Configurable, see typical pin layout above
+#define BUZZER_PIN      6
 #define DEBUG
 #define DHCP
 
@@ -56,6 +57,7 @@ void setup() {
   digitalWrite(7, HIGH);
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
+  pinMode(BUZZER_PIN, OUTPUT);
 
 #ifdef DEBUG
   while (!Serial) {
@@ -80,6 +82,9 @@ void setup() {
     mfrc522.PCD_DumpVersionToSerial();  // Show details of PCD - MFRC522 Card Reader details
   #endif
   Serial.println("RFID reader initialized.");
+  tone(BUZZER_PIN, 1000);
+  delay(250);
+  noTone(BUZZER_PIN);
 }
 
 EthernetClient webClient;
@@ -95,9 +100,23 @@ void loop() {
     for(int i=0;i<cnt;i++) {
       if (buff[i] == '{' && !inJSON) {
         inJSON = true;
+        webResult = "";
       } else if (buff[i] == '}' && inJSON) {
         inJSON = false;
         webResult += buff[i];
+        if (webResult.equals("{\"RESPONSE\":\"OK\"}")) {
+          tone(BUZZER_PIN, 1000);
+          delay(250);
+          noTone(BUZZER_PIN);
+        } else {
+          tone(BUZZER_PIN, 1000);
+          delay(250);
+          noTone(BUZZER_PIN);
+          delay(250);
+          tone(BUZZER_PIN, 1000);
+          delay(250);
+          noTone(BUZZER_PIN);
+        }
       }
       if (inJSON) {
         webResult += buff[i];

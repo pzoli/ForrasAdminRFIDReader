@@ -9,6 +9,11 @@ JsonDocument doc;
 #define RST_PIN         9          // Configurable, see typical pin layout above
 #define SS_PIN          7         // Configurable, see typical pin layout above
 #define BUZZER_PIN      6
+
+#define RGB_R 2
+#define RGB_G 3
+#define RGB_B 4
+
 #define DEBUG
 #define DHCP
 
@@ -48,6 +53,12 @@ String getMACasString(uint8_t* mac) {
   return String(macno);
 }
 
+void setColor(int redValue, int greenValue,  int blueValue) {
+  analogWrite(RGB_R, redValue);
+  analogWrite(RGB_G,  greenValue);
+  analogWrite(RGB_B, blueValue);
+}
+
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(115200);
@@ -58,6 +69,18 @@ void setup() {
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
   pinMode(BUZZER_PIN, OUTPUT);
+
+  pinMode(RGB_R,  OUTPUT);              
+  pinMode(RGB_G, OUTPUT);
+  pinMode(RGB_B, OUTPUT);
+
+  setColor(255, 0, 0);
+  delay(1000);
+  setColor(0,  255, 0);
+  delay(1000);
+  setColor(0, 0, 255); 
+  delay(1000);
+  setColor(255, 255, 255); 
 
 #ifdef DEBUG
   while (!Serial) {
@@ -105,10 +128,13 @@ void loop() {
         inJSON = false;
         webResult += buff[i];
         if (webResult.equals(F("{\"RESPONSE\":\"OK\"}"))) {
+          setColor(0, 255, 0);
           tone(BUZZER_PIN, 1000);
           delay(250);
           noTone(BUZZER_PIN);
+          setColor(255, 255, 255);
         } else {
+          setColor(255, 0, 0);
           tone(BUZZER_PIN, 1000);
           delay(250);
           noTone(BUZZER_PIN);
@@ -116,6 +142,7 @@ void loop() {
           tone(BUZZER_PIN, 1000);
           delay(250);
           noTone(BUZZER_PIN);
+          setColor(255, 255, 255);
         }
       }
       if (inJSON) {

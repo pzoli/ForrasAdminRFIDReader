@@ -196,6 +196,11 @@ void loop() {
     } else {
 #ifdef DEBUG
       Serial.println(F("connection failed"));
+      setColor(0, 0, 255);
+      tone(BUZZER_PIN, 500);
+      delay(2000);
+      noTone(BUZZER_PIN);
+      setColor(255, 255, 255);
 #endif
     } 
   }

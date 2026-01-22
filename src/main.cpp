@@ -213,6 +213,7 @@ void loop()
       String request = String(conf.request);
       request.replace(F("%RID%"), getMACasString(conf.mac));
       request.replace(F("%CID%"), cardId);
+      request.replace(F("%TYPE%"), "RF1");
 #ifdef DEBUG
       Serial.println();
       Serial.print(F("request:"));

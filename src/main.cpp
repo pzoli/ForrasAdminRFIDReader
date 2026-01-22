@@ -14,8 +14,8 @@ JsonDocument doc;
 #define RGB_G 3
 #define RGB_B 4
 
-#define DEBUG
-#define DHCP
+// #define DEBUG
+// #define DHCP
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance
 
@@ -29,6 +29,7 @@ struct NetConfig
   uint8_t subnet[4];
   uint8_t gateway[4];
   uint8_t dnsserver[4];
+  uint16_t serverport;
 } conf;
 
 void printIPToSerial(String ipname, IPAddress addr)
@@ -205,7 +206,7 @@ void loop()
     Serial.print(F("cardid:"));
     Serial.println(cardId);
 #endif
-    if (webClient.connect(conf.serverip, 8080))
+    if (webClient.connect(conf.serverip, conf.serverport)) // 8080
     {
       webClient.print(F("GET "));
       String request = String(F("/forras-admin/rest/createNFCLog?readerid=%RID%&rfid=%CID%&type=RF1"));

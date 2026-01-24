@@ -17,6 +17,8 @@ JsonDocument doc;
 // #define DEBUG
 #define DHCP
 
+String webResult = "";
+
 MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522 instance
 
 struct NetConfig
@@ -92,11 +94,6 @@ void setup()
 
   setColor(255, 0, 0);
   delay(1000);
-  setColor(0, 255, 0);
-  delay(1000);
-  setColor(0, 0, 255);
-  delay(1000);
-  setColor(255, 255, 255);
 
 #ifdef DEBUG
   while (!Serial)
@@ -118,6 +115,8 @@ void setup()
     Serial.println(Ethernet.localIP());
     printIPToSerial(F("server ip: "), conf.serverip);
   }
+  setColor(0, 255, 0);
+  delay(1000);
 
   Serial.println("init RFID reader...");
   mfrc522.PCD_Init(); // Init MFRC522
@@ -125,23 +124,49 @@ void setup()
   mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader details
 #endif
   Serial.println("RFID reader initialized.");
+  webResult.reserve(128);
+  setColor(0, 0, 255);
+  delay(1000);
   tone(BUZZER_PIN, 1000);
   delay(250);
   noTone(BUZZER_PIN);
+  setColor(255, 255, 255);
 }
 
 EthernetClient webClient;
 bool dataSent = false;
 bool inJSON = false;
-String webResult = "";
 String command = "";
+
+void processServerResponse() {
+  if (webResult.equals(F("{\"RESPONSE\":\"OK\"}"))) {
+    Serial.println(F("Success response beep"));
+      setColor(0, 255, 0);
+      tone(BUZZER_PIN, 1000, 250);
+      delay(250);
+      setColor(255, 255, 255);
+  } else {
+    Serial.println(F("Failure or Unknown case response beep"));
+      setColor(255, 0, 0);
+      tone(BUZZER_PIN, 1000, 250);
+      delay(500);
+      tone(BUZZER_PIN, 1000, 250);
+      setColor(255, 255, 255);
+  }
+}
 
 void loop()
 {
-  if (webClient.available())
+  if (conf.usedhcp == 1)
+  {
+    Ethernet.maintain();
+  }
+
+  int available = webClient.available();
+  while (available > 0)
   {
     char buff[64];
-    int cnt = webClient.readBytes(buff, sizeof(buff));
+    int cnt = webClient.readBytes(buff, available > sizeof(buff) ? sizeof(buff) : available);
     for (int i = 0; i < cnt; i++)
     {
       if (buff[i] == '{' && !inJSON)
@@ -153,26 +178,7 @@ void loop()
       {
         inJSON = false;
         webResult += buff[i];
-        if (webResult.equals(F("{\"RESPONSE\":\"OK\"}")))
-        {
-          setColor(0, 255, 0);
-          tone(BUZZER_PIN, 1000);
-          delay(250);
-          noTone(BUZZER_PIN);
-          setColor(255, 255, 255);
-        }
-        else
-        {
-          setColor(255, 0, 0);
-          tone(BUZZER_PIN, 1000);
-          delay(250);
-          noTone(BUZZER_PIN);
-          delay(250);
-          tone(BUZZER_PIN, 1000);
-          delay(250);
-          noTone(BUZZER_PIN);
-          setColor(255, 255, 255);
-        }
+        processServerResponse();
       }
       if (inJSON)
       {
@@ -182,6 +188,7 @@ void loop()
 #ifdef DEBUG
     Serial.write(buff, cnt);
 #endif
+    available = webClient.available();
   }
 
   if (!webClient.connected() && dataSent)

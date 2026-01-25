@@ -127,9 +127,13 @@ void setup()
   webResult.reserve(128);
   setColor(0, 0, 255);
   delay(1000);
+  pinMode(BUZZER_PIN, OUTPUT);
   tone(BUZZER_PIN, 1000);
   delay(250);
   noTone(BUZZER_PIN);
+  delay(250);
+  digitalWrite(BUZZER_PIN, LOW);
+  pinMode(BUZZER_PIN, INPUT);
   setColor(255, 255, 255);
 }
 
@@ -142,15 +146,22 @@ void processServerResponse() {
   if (webResult.equals(F("{\"RESPONSE\":\"OK\"}"))) {
     Serial.println(F("Success response beep"));
       setColor(0, 255, 0);
+      pinMode(BUZZER_PIN, OUTPUT);
       tone(BUZZER_PIN, 1000, 250);
       delay(250);
+      digitalWrite(BUZZER_PIN, LOW);
+      pinMode(BUZZER_PIN, INPUT);
       setColor(255, 255, 255);
   } else {
     Serial.println(F("Failure or Unknown case response beep"));
       setColor(255, 0, 0);
+      pinMode(BUZZER_PIN, OUTPUT);
       tone(BUZZER_PIN, 1000, 250);
       delay(500);
       tone(BUZZER_PIN, 1000, 250);
+      delay(250);
+      digitalWrite(BUZZER_PIN, LOW);
+      pinMode(BUZZER_PIN, INPUT);
       setColor(255, 255, 255);
   }
 }
@@ -241,9 +252,13 @@ void loop()
 #ifdef DEBUG
       Serial.println(F("connection failed"));
       setColor(0, 0, 255);
+      pinMode(BUZZER_PIN, OUTPUT);
       tone(BUZZER_PIN, 500);
       delay(2000);
       noTone(BUZZER_PIN);
+      delay(250);
+      digitalWrite(BUZZER_PIN, LOW);
+      pinMode(BUZZER_PIN, INPUT);
       setColor(255, 255, 255);
 #endif
     }
